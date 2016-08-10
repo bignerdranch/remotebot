@@ -57,7 +57,7 @@ var processMessage = data => {
 
 bot.on('message', data => {
   if (data.type === 'message' &&
-      data.username !== BOT_HANDLE) {
+      data.username !== BOT_NAME) {
     processMessage(data);
   }
 });
@@ -126,5 +126,9 @@ wait(() => {
 
   route(r(regex, 'i'), (_, { user }) => {
     say(`<@${user}> Are you having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified!`);
+  });
+
+  route(r(`${bot}.*`, 'i'), () => {
+    say(`Huh? I don't follow.`);
   });
 });
