@@ -3,6 +3,7 @@ require('dotenv').config();
 var r = RegExp;
 
 var SlackBot = require('slackbots');
+var State = require('./state');
 
 var Promise = global.Promise;
 
@@ -13,7 +14,7 @@ var CHANNEL = process.env.SLACK_CHANNEL;
 
 var BOT_ID, CHANNEL_ID;
 
-var currentStatus = 'unknown';
+var state = new State();
 
 var bot = new SlackBot({
   token: BOT_TOKEN,
@@ -37,12 +38,11 @@ var wait = (callback) => {
   ]).then(callback);
 };
 
-var updateStatus = (status) => {
-  currentStatus = status;
+state.on('change', ({ status }) => {
   var emoji = statuses[status];
   console.log(status);
   say(`<!here|@here> Updated status to *${status}* ${emoji}`);
-};
+});
 
 var processMessage = data => {
   var text = data.text;
@@ -77,6 +77,7 @@ wait(() => {
   var bot = `(@?remotebot|<@${BOT_ID}>)`;
 
   route(r(`${bot} .*status.*`, 'i'), () => {
+    var currentStatus = state.getStatus();
     var emoji = statuses[currentStatus];
 
     say(`Looks like the status on the remote stream is *${currentStatus}* ${emoji}`);
@@ -84,7 +85,7 @@ wait(() => {
 
   Object.keys(statuses).forEach(status => {
     route(r(`${bot} ${status}(\W.*)?`, 'i'), () => {
-      updateStatus(status);
+      state.updateStatus(status);
     });
   });
 
