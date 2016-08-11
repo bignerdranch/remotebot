@@ -15,6 +15,16 @@ var CHANNEL = process.env.SLACK_CHANNEL;
 var BOT_ID, CHANNEL_ID;
 
 var state = new State();
+var statusKey = State.statusKey;
+var statuses = State.statuses;
+
+var emojis = {
+  unknown: ':zzz:',
+  blue: ':arrows_counterclockwise:',
+  green: ':white_check_mark:',
+  yellow: ':warning:',
+  red: ':no_entry:'
+};
 
 var bot = new SlackBot({
   token: BOT_TOKEN,
@@ -27,7 +37,9 @@ var route = (pattern, callback) => {
 };
 
 var say = (message) => {
-  bot.postMessageToChannel(CHANNEL, message);
+  bot.postMessageToChannel(CHANNEL, message, {
+    icon_emoji: emojis[state.getStatus()]
+  });
 };
 
 var wait = (callback) => {
@@ -38,10 +50,15 @@ var wait = (callback) => {
   ]).then(callback);
 };
 
+var printStatus = (status) => {
+  var emoji = emojis[status];
+  var text = statusKey[status];
+  return `${emoji} *${status}:* ${text[0]}.\n\n_${text[1]}_`;
+};
+
 state.on('change', ({ status }) => {
-  var emoji = statuses[status];
   console.log(status);
-  say(`<!here|@here> Updated status to *${status}* ${emoji}`);
+  say(`<!here|@here> Updated status to ${printStatus(status)}`);
 });
 
 var processMessage = data => {
@@ -57,19 +74,12 @@ var processMessage = data => {
 
 bot.on('message', data => {
   if (data.type === 'message' &&
+      data.text != null &&
       data.username !== BOT_NAME) {
     processMessage(data);
   }
 });
 
-
-
-var statuses = {
-  unknown: ':question:',
-  green: ':white_check_mark:',
-  yellow: ':warning:',
-  red: ':no_entry:'
-};
 
 wait(() => {
   console.log('ready!');
@@ -78,19 +88,37 @@ wait(() => {
 
   route(r(`${bot} .*status.*`, 'i'), () => {
     var currentStatus = state.getStatus();
-    var emoji = statuses[currentStatus];
 
-    say(`Looks like the status on the remote stream is *${currentStatus}* ${emoji}`);
+    say(`Looks like the status on the remote stream is ${printStatus(currentStatus)}`);
   });
 
-  Object.keys(statuses).forEach(status => {
+  statuses.forEach(status => {
     route(r(`${bot} ${status}(\W.*)?`, 'i'), () => {
       state.updateStatus(status);
     });
   });
 
   route(r(`${bot} (.*\W)?help(\W.*)?`, 'i'), () => {
-    say(`I can help!`);
+    var message =
+`Hi! I’m *Remote Bot*, a distraction-free remote telepresence chatbot to let in-office folks know if the remote video feed has issues!
+
+Here are some things I can do:\n\n`;
+
+    var commands = [];
+
+    commands.push(['status', 'prints out the current status of the remote stream.']);
+
+    statuses.forEach(status => {
+      var text = statusKey[status];
+      var emoji = emojis[status];
+      commands.push([status, `updates my status to ${emoji} *${status}*: _${text[1]}_`]);
+    });
+
+    message += commands.map(([cmd, text]) => {
+      return `> \`remotebot ${cmd}\` ${text}`;
+    }).join('\n');
+
+    say(message);
   });
 
   route(r(`${bot} (.*\W)?(hi|hello|hey)(\W.*)?`, 'i'), () => {
