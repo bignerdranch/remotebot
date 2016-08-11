@@ -42,10 +42,12 @@ var route = (pattern, callback) => {
   routes.push({ pattern, callback });
 };
 
-var say = (message) => {
-  bot.postMessageToChannel(CHANNEL, message, {
+var say = (message, channel = CHANNEL_ID) => {
+  var params = {
     icon_emoji: emojis[state.getStatus()]
-  });
+  };
+
+  bot.postMessage(channel, message, params);
 };
 
 var wait = (callback) => {
@@ -104,7 +106,7 @@ wait(() => {
     });
   });
 
-  route(r(`${bot} (.*\W)?help(\W.*)?`, 'i'), () => {
+  route(r(`${bot} (.*\W)?help(\W.*)?`, 'i'), (_, { user }) => {
     var message =
 `Hi! I’m *Remote Bot*, a distraction-free remote telepresence chatbot to let in-office folks know if the remote video feed has issues!
 
@@ -124,7 +126,8 @@ Here are some things I can do:\n\n`;
       return `> \`remotebot ${cmd}\` ${text}`;
     }).join('\n');
 
-    say(message);
+    say("I’m here to help! I sent you a direct message.");
+    say(message, user);
   });
 
   route(r(`${bot} (.*\W)?(hi|hello|hey)(\W.*)?`, 'i'), () => {
