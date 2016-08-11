@@ -3,6 +3,7 @@ require('dotenv').config();
 var r = RegExp;
 
 var SlackBot = require('slackbots');
+var WSS = require('./wss');
 var State = require('./state');
 
 var Promise = global.Promise;
@@ -29,6 +30,11 @@ var emojis = {
 var bot = new SlackBot({
   token: BOT_TOKEN,
   name: BOT_NAME
+});
+
+var wss = WSS({
+  port: 3001,
+  state
 });
 
 var routes = [];
