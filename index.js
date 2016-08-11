@@ -164,6 +164,6 @@ Here are some things I can do:\n\n`;
   });
 
   route(r(`${bot}.*`, 'i'), () => {
-    say(`Huh? I don't follow.`);
+    say(`Huh? I don't follow. Try \`remotebot help\`?`);
   });
 });
