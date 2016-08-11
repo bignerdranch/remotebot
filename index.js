@@ -32,10 +32,9 @@ var bot = new SlackBot({
   name: BOT_NAME
 });
 
-var wss = WSS({
-  port: 3001,
-  state
-});
+const port = process.env.PORT || 3000;
+
+var wss = WSS({ port, state });
 
 var routes = [];
 var route = (pattern, callback) => {
