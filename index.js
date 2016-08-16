@@ -93,10 +93,10 @@ wait(() => {
 
   var bot = `(@?remotebot|<@${BOT_ID}>)`;
 
-  route(r(`${bot} .*status.*`, 'i'), () => {
+  route(r(`${bot} .*status.*`, 'i'), (_, { channel }) => {
     var currentStatus = state.getStatus();
 
-    say(`Looks like the status on the remote stream is ${printStatus(currentStatus)}`);
+    say(`Looks like the status on the remote stream is ${printStatus(currentStatus)}`, channel);
   });
 
   statuses.forEach(status => {
@@ -105,7 +105,7 @@ wait(() => {
     });
   });
 
-  route(r(`${bot} (.*\W)?help(\W.*)?`, 'i'), (_, { user }) => {
+  route(r(`${bot} (.*\W)?help(\W.*)?`, 'i'), (_, { user, channel }) => {
     var message =
 `Hi! I’m *Remote Bot*, a distraction-free remote telepresence chatbot to let in-office folks know if the remote video feed has issues!
 
@@ -125,12 +125,12 @@ Here are some things I can do:\n\n`;
       return `> \`remotebot ${cmd}\` ${text}`;
     }).join('\n');
 
-    say("I’m here to help! I sent you a direct message.");
+    say("I’m here to help! I sent you a direct message.", channel);
     say(message, user);
   });
 
-  route(r(`${bot} (.*\W)?(hi|hello|hey)(\W.*)?`, 'i'), () => {
-    say(`Why hello there!`);
+  route(r(`${bot} (.*\W)?(hi|hello|hey)(\W.*)?`, 'i'), (_, { channel }) => {
+    say(`Why hello there!`, channel);
   });
 
   var videoSyn = [
@@ -161,11 +161,11 @@ Here are some things I can do:\n\n`;
 
   var regex = `.*((${v}).+(${q})).*|.*((${q}).+(${v})).*`;
 
-  route(r(regex, 'i'), (_, { user }) => {
-    say(`<@${user}> Are you having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified!`);
+  route(r(regex, 'i'), (_, { user, channel }) => {
+    say(`<@${user}> Are you having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified!`, channel);
   });
 
-  route(r(`${bot}.*`, 'i'), () => {
-    say(`Huh? I don't follow. Try \`remotebot help\`?`);
+  route(r(`${bot}.*`, 'i'), (_, { channel }) => {
+    say(`Huh? I don't follow. Try \`remotebot help\`?`, channel);
   });
 });
