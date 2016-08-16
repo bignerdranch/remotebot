@@ -65,7 +65,7 @@ var printStatus = (status) => {
 
 state.on('change', ({ status }) => {
   console.log(status);
-  say(`<!here|@here> Updated status to ${printStatus(status)}`);
+  say(`Updated status to ${printStatus(status)}`);
 });
 
 var processMessage = data => {
