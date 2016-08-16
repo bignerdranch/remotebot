@@ -96,7 +96,7 @@ wait(() => {
   route(r(`${bot} .*status.*`, 'i'), (_, { channel }) => {
     var currentStatus = state.getStatus();
 
-    say(`Looks like the status on the remote stream is ${printStatus(currentStatus)}\n\nYou can follow along in <#${CHANNEL_ID}>.`, channel);
+    say(`Looks like the status on the remote stream is ${printStatus(currentStatus)}\n\nYou can follow me in <#${CHANNEL_ID}>.`, channel);
   });
 
   statuses.forEach(status => {
@@ -104,7 +104,7 @@ wait(() => {
       state.updateStatus(status, { user, channel });
       if (channel !== CHANNEL_ID) {
         var emoji = emojis[status];
-        say(`<@${user}> ${emoji} Done! You can follow along in <#${CHANNEL_ID}>.`, channel);
+        say(`<@${user}> ${emoji} Done! You can follow me in <#${CHANNEL_ID}>.`, channel);
       }
     });
   });
@@ -174,7 +174,7 @@ Here are some things I can do:\n\n`;
       case 'red':
         break;
       default:
-        say(`<@${user}> Having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified, or follow along in <#${CHANNEL_ID}>.`, channel);
+        say(`<@${user}> Having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified, or follow me in <#${CHANNEL_ID}>.`, channel);
     }
   });
 
