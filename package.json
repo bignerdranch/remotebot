@@ -20,6 +20,6 @@
     "dotenv": "^2.0.0",
     "slackbots": "^0.5.2",
     "utf-8-validate": "1.2.1",
-    "ws": "1.1.1"
+    "ws": "FlorianBELLAZOUZ/ws#KeepAlive"
   }
 }
