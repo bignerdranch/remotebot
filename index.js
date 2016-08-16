@@ -153,6 +153,7 @@ Here are some things I can do:\n\n`;
     'broken',
     'cutting',
     'in and out',
+    'drop(ped|ping)?',
     'stutter(ing)?'
   ];
 
