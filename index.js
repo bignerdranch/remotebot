@@ -91,7 +91,7 @@ bot.on('message', data => {
 wait(() => {
   console.log('ready!');
 
-  var bot = `(@?remotebot|<@${BOT_ID}>)`;
+  var bot = `(@?remote ?bot|<@${BOT_ID}>):?`;
 
   route(r(`${bot} .*status.*`, 'i'), (_, { channel }) => {
     var currentStatus = state.getStatus();
