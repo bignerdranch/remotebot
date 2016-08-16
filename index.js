@@ -60,7 +60,7 @@ var wait = (callback) => {
 var printStatus = (status) => {
   var emoji = emojis[status];
   var text = statusKey[status];
-  return `${emoji} *${status}:* ${text[0]}.\n\n_${text[1]}_`;
+  return `${emoji} *${status}:* ${text[0]}.\n\n> _${text[1]}_`;
 };
 
 state.on('change', ({ status }) => {
@@ -96,18 +96,22 @@ wait(() => {
   route(r(`${bot} .*status.*`, 'i'), (_, { channel }) => {
     var currentStatus = state.getStatus();
 
-    say(`Looks like the status on the remote stream is ${printStatus(currentStatus)}`, channel);
+    say(`Looks like the status on the remote stream is ${printStatus(currentStatus)}\n\nYou can follow along in <#${CHANNEL_ID}>.`, channel);
   });
 
   statuses.forEach(status => {
-    route(r(`${bot} ${status}(\W.*)?`, 'i'), () => {
-      state.updateStatus(status);
+    route(r(`${bot} ${status}(\W.*)?`, 'i'), (_, { user, channel }) => {
+      state.updateStatus(status, { user, channel });
+      if (channel !== CHANNEL_ID) {
+        var emoji = emojis[status];
+        say(`<@${user}> ${emoji} Done! You can follow along in <#${CHANNEL_ID}>.`, channel);
+      }
     });
   });
 
   route(r(`${bot} (.*\W)?help(\W.*)?`, 'i'), (_, { user, channel }) => {
     var message =
-`Hi! I’m *Remote Bot*, a distraction-free remote telepresence chatbot to let in-office folks know if the remote video feed has issues!
+`Hi! I’m *Remote Bot*, a distraction-free remote telepresence chatbot to let in-office folks know if the remote video feed has issues! Follow me in <#${CHANNEL_ID}>.
 
 Here are some things I can do:\n\n`;
 
@@ -125,7 +129,7 @@ Here are some things I can do:\n\n`;
       return `> \`remotebot ${cmd}\` ${text}`;
     }).join('\n');
 
-    say("I’m here to help! I sent you a direct message.", channel);
+    say(`<@${user}> I’m here to help! I sent you a direct message.`, channel);
     say(message, user);
   });
 
@@ -170,7 +174,7 @@ Here are some things I can do:\n\n`;
       case 'red':
         break;
       default:
-        say(`<@${user}> Are you having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified!`, channel);
+        say(`<@${user}> Having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified, or follow along in <#${CHANNEL_ID}>.`, channel);
     }
   });
 
