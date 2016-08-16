@@ -179,6 +179,6 @@ Here are some things I can do:\n\n`;
   });
 
   route(r(`${bot}.*`, 'i'), (_, { channel }) => {
-    say(`Huh? I don't follow. Try \`remotebot help\`?`, channel);
+    say(`Huh? I don’t follow. Try \`remotebot help\`?`, channel);
   });
 });
