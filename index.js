@@ -163,7 +163,15 @@ Here are some things I can do:\n\n`;
   var regex = `.*((${v}).+(${q})).*|.*((${q}).+(${v})).*`;
 
   route(r(regex, 'i'), (_, { user, channel }) => {
-    say(`<@${user}> Are you having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified!`, channel);
+    var currentStatus = state.getStatus();
+
+    switch (currentStatus) {
+      case 'unknown':
+      case 'red':
+        break;
+      default:
+        say(`<@${user}> Are you having trouble with the remote stream? *You can alert folks* with \`@remotebot red\` and they will be notified!`, channel);
+    }
   });
 
   route(r(`${bot}.*`, 'i'), (_, { channel }) => {
