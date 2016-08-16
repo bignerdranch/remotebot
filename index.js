@@ -69,7 +69,7 @@ state.on('change', ({ status }) => {
   say(`Updated status to ${printStatus(status)}`);
 
   if (status === 'blue') {
-    say(`A meeting is starting in Ada. If you are joining remotely, can you confirm that the remote stream is working? If it is, type \`@remotebot green\`.`, SOLICIT_CHANNEL);
+    say(`*A meeting is starting in Ada.* If you are joining remotely, can you confirm that the remote stream is working? If it is, type \`@remotebot green\`.`, SOLICIT_CHANNEL);
   }
 });
 
