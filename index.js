@@ -12,6 +12,7 @@ var BOT_TOKEN = process.env.SLACK_BOT_TOKEN;
 var BOT_NAME = process.env.SLACK_BOT_NAME;
 var BOT_HANDLE = process.env.SLACK_BOT_HANDLE;
 var CHANNEL = process.env.SLACK_CHANNEL;
+var SOLICIT_CHANNEL = process.env.SLACK_SOLICIT_CHANNEL;
 
 var BOT_ID, CHANNEL_ID;
 
@@ -66,6 +67,10 @@ var printStatus = (status) => {
 state.on('change', ({ status }) => {
   console.log(status);
   say(`Updated status to ${printStatus(status)}`);
+
+  if (status === 'blue') {
+    say(`A meeting is starting in Ada. If you are joining remotely, can you confirm that the remote stream is working? If it is, type \`@remotebot green\`.`, SOLICIT_CHANNEL);
+  }
 });
 
 var processMessage = data => {
