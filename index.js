@@ -3,7 +3,7 @@ require('dotenv').config();
 var r = RegExp;
 
 var SlackBot = require('slackbots');
-var WSS = require('./wss');
+var Server = require('./server');
 var State = require('./state');
 
 var Promise = global.Promise;
@@ -35,7 +35,11 @@ var bot = new SlackBot({
 
 const port = process.env.PORT || 3000;
 
-var wss = WSS({ port, state });
+var express = require('express');
+var app = express();
+var auth = require('./auth')(app);
+
+var server = Server({ port, state, app });
 
 var routes = [];
 var route = (pattern, callback) => {
