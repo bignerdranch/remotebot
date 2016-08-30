@@ -43,7 +43,7 @@ module.exports = (app) => {
 
   app.verifyClient = ({ req }, done) => {
     sessionParser(req, {}, () => {
-      var session = req.session.passport;
+      var session = req.session && req.session.passport;
       var hasSession = session && session.user;
 
       var httpAuth = req.headers.authorization;
